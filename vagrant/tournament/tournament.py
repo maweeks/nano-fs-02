@@ -44,7 +44,12 @@ def delectPlayersCurrent():
 
 def countPlayers():
     """Returns the number of players currently registered."""
-
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("SELECT count(*) FROM players;")
+    value = cursor.fetchall()[0][0]
+    DB.close()
+    return value
 
 def registerPlayer(name):
     """Adds a player to the tournament database.
