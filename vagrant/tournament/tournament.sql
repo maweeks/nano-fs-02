@@ -27,9 +27,9 @@ CREATE TABLE players(
 
 
 CREATE TABLE matches(
-	tid SERIAL REFERENCES tournaments(id),
-	pida SERIAL REFERENCES  players(id),
-	pidb SERIAL REFERENCES  players(id),
+	tid SERIAL REFERENCES tournaments(id) ON DELETE CASCADE,
+	pida SERIAL REFERENCES  players(id) ON DELETE CASCADE,
+	pidb SERIAL REFERENCES  players(id) ON DELETE CASCADE,
 	round INT,
 	status INT DEFAULT 0,
 	PRIMARY KEY (tid, pida, pidb)

@@ -13,11 +13,34 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("DELETE FROM matches;")
+    DB.close()
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("DELETE FROM players;")
+    DB.close()
 
+
+def deleteTournaments():
+    """Remove all the tournament records from the database."""
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("DELETE FROM tournaments;")
+    DB.close()
+
+def delectMatchesCurrent():
+    """Remove all the match records for the current tournament from the database."""
+    # TODO: Extension
+
+def delectPlayersCurrent():
+    """Remove all the player records for the current tournament from the database."""
+    # TODO: Extension
 
 def countPlayers():
     """Returns the number of players currently registered."""

@@ -20,6 +20,8 @@ vagrant up
 
 cd /vagrant/tournament
 
-\i tournament.sql
+psql
+
+\i tournament.sql; \q
 
 The database is now set up to be used.
