@@ -27,11 +27,10 @@ CREATE TABLE players(
 
 
 CREATE TABLE matches(
-    tid SERIAL REFERENCES tournaments(id) ON DELETE CASCADE,
-    round INT,
-    pida SERIAL REFERENCES  players(id) ON DELETE CASCADE,
-    pidb SERIAL REFERENCES  players(id) ON DELETE CASCADE,
-    status INT DEFAULT 0,
+    tid INT REFERENCES tournaments(id) ON DELETE CASCADE,
+    pida INT REFERENCES  players(id) ON DELETE CASCADE,
+    pidb INT REFERENCES  players(id) ON DELETE CASCADE,
+    status INT,
     PRIMARY KEY (tid, pida, pidb)
 );
 
@@ -48,23 +47,23 @@ CREATE VIEW playerCountDraws AS
 
 CREATE VIEW playerCountLoses AS
     SELECT pida AS id, sum(countA) AS count FROM
-        (SELECT pida, count(pida) AS countA FROM matches WHERE status = 1 GROUP BY pida
-        UNION ALL
-        SELECT pidb, count(pidb) AS countB FROM matches WHERE status = 2 GROUP BY pidb) AS counts
-        GROUP BY pida ORDER BY pida;
-
-CREATE VIEW playerCountWins AS
-    SELECT pida AS id, sum(countA) AS count FROM
         (SELECT pida, count(pida) AS countA FROM matches WHERE status = 2 GROUP BY pida
         UNION ALL
         SELECT pidb, count(pidb) AS countB FROM matches WHERE status = 1 GROUP BY pidb) AS counts
         GROUP BY pida ORDER BY pida;
 
+CREATE VIEW playerCountWins AS
+    SELECT pida AS id, sum(countA) AS count FROM
+        (SELECT pida, count(pida) AS countA FROM matches WHERE status = 1 GROUP BY pida
+        UNION ALL
+        SELECT pidb, count(pidb) AS countB FROM matches WHERE status = 2 GROUP BY pidb) AS counts
+        GROUP BY pida ORDER BY pida;
+
 CREATE VIEW playerCountMatches AS
     SELECT pida AS id, sum(countA) AS matches FROM
-        (SELECT pida, count(pida) AS countA FROM matches WHERE status != 0 GROUP BY pida
+        (SELECT pida, count(pida) AS countA FROM matches GROUP BY pida
         UNION ALL
-        SELECT pidb, count(pidb) AS countB FROM matches WHERE status != 0 GROUP BY pidb) AS counts
+        SELECT pidb, count(pidb) AS countB FROM matches GROUP BY pidb) AS counts
         GROUP BY pida ORDER BY pida;
 
 CREATE VIEW playerCountPoints AS
@@ -86,13 +85,13 @@ INSERT INTO tournaments(name) VALUES ('s');
 INSERT INTO tournaments(name) VALUES ('d');
 INSERT INTO tournaments(name) VALUES ('f');
 
-INSERT INTO matches(tid, pida, pidb, round) VALUES (1, 1, 2, 1);
-INSERT INTO matches(tid, pida, pidb, round) VALUES (1, 3, 4, 1);
-INSERT INTO matches(tid, pida, pidb, round) VALUES (1, 5, 6, 1);
-INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 1, 3, 2, 3);
-INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 1, 4, 2, 3);
-INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 1, 6, 2, 2);
-INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 2, 6, 2, 2);
+INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 2, 1);
+INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 3, 4, 2);
+INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 5, 6, 3);
+INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 3, 3);
+INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 4, 3);
+INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 6, 2);
+INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 2, 6, 2);
 
 \d
 SELECT * FROM players;

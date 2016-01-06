@@ -69,31 +69,38 @@ def playerStandings():
       A list of tuples, each of which contains (id, name, wins, matches):
         id: the player's unique id (assigned by the database)
         name: the player's full name (as registered)
-        wins: the number of matches the player has won
+        points: the points the player has won
         matches: the number of matches the player has played
     """
     # TODO: Current tournement
+    # TODO: sort 2 - opponant points
     DB = connect()
     cursor = DB.cursor()
     cursor.execute("""SELECT currentPlayers.id, currentPlayers.name,
-        CASE WHEN playerCountMatches.matches IS NULL THEN 0 ELSE playerCountMatches.matches END AS matches,
-        CASE WHEN playerCountPoints.points IS NULL THEN 0 ELSE playerCountPoints.points END AS matches
+        CASE WHEN playerCountPoints.points IS NULL THEN 0 ELSE playerCountPoints.points END AS points,
+        CASE WHEN playerCountMatches.matches IS NULL THEN 0 ELSE playerCountMatches.matches END AS matches
         FROM currentPlayers
         currentPlayers LEFT JOIN 
         (playerCountMatches LEFT JOIN playerCountPoints ON playerCountMatches.id = playerCountPoints.id)
-        ON currentPlayers.id = playerCountMatches.id;""")
+        ON currentPlayers.id = playerCountMatches.id
+        ORDER BY points DESC, id ASC;""")
     posts = cursor.fetchall()
     DB.close()
     return posts
 
 
-def reportMatch(winner, loser):
+def reportMatch(pida, pidb, status):
     """Records the outcome of a single match between two players.
 
     Args:
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("""INSERT INTO matches (tid, pida, pidb, status) VALUES (5, %s, %s, %s)""", (pida, pidb, status,));
+    DB.commit()
+    DB.close()
  
  
 def swissPairings():
@@ -113,11 +120,19 @@ def swissPairings():
     """
 
 # Extra functions
+
+def createTournament(name):
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("INSERT INTO tournaments (name) VALUES (%s)",(name,))
+    DB.commit()
+    DB.close()
+
 def printMatches():
     """Print a list of all the matches in the database."""
     DB = connect()
     cursor = DB.cursor()
-    cursor.execute("SELECT * FROM matches ORDER BY tid, round, pida;")
+    cursor.execute("SELECT * FROM matches ORDER BY tid;")
     for row in cursor.fetchall():
         print(row)
     DB.close()
