@@ -28,51 +28,51 @@ CREATE TABLE players(
 
 CREATE TABLE matches(
     tid SERIAL REFERENCES tournaments(id) ON DELETE CASCADE,
+    round INT,
     pida SERIAL REFERENCES  players(id) ON DELETE CASCADE,
     pidb SERIAL REFERENCES  players(id) ON DELETE CASCADE,
-    round INT,
     status INT DEFAULT 0,
     PRIMARY KEY (tid, pida, pidb)
 );
 
--- CREATE VIEW playerCountDraws AS
---     SELECT (CASE WHEN pida IS NULL THEN pidb ELSE pida END) AS pid, 
---         (CASE WHEN countA IS NULL THEN 0 ELSE countA END + 
---         CASE WHEN countB IS NULL THEN 0 ELSE countB END) AS draws FROM
---         (SELECT pida, count(pida) AS countA FROM matches WHERE status = 3 GROUP BY pida) AS xa
---         FULL OUTER JOIN
---         (SELECT pidb, count(pidb) AS countB FROM matches WHERE status = 3 GROUP BY pidb) AS xb
---         ON xa.pida = xb.pidb;
+-- TODO: for current tournament
+CREATE VIEW currentPlayers AS
+    SELECT * FROM players;
 
 CREATE VIEW playerCountDraws AS
-    SELECT pida AS pid, sum(countA) AS draws FROM
+    SELECT pida AS id, sum(countA) AS count FROM
         (SELECT pida, count(pida) AS countA FROM matches WHERE status = 3 GROUP BY pida
         UNION ALL
         SELECT pidb, count(pidb) AS countB FROM matches WHERE status = 3 GROUP BY pidb) AS counts
         GROUP BY pida ORDER BY pida;
 
 CREATE VIEW playerCountLoses AS
-    SELECT pida AS pid, sum(countA) AS loses FROM
+    SELECT pida AS id, sum(countA) AS count FROM
         (SELECT pida, count(pida) AS countA FROM matches WHERE status = 1 GROUP BY pida
         UNION ALL
         SELECT pidb, count(pidb) AS countB FROM matches WHERE status = 2 GROUP BY pidb) AS counts
         GROUP BY pida ORDER BY pida;
 
 CREATE VIEW playerCountWins AS
-    SELECT pida AS pid, sum(countA) AS wins FROM
+    SELECT pida AS id, sum(countA) AS count FROM
         (SELECT pida, count(pida) AS countA FROM matches WHERE status = 2 GROUP BY pida
         UNION ALL
         SELECT pidb, count(pidb) AS countB FROM matches WHERE status = 1 GROUP BY pidb) AS counts
         GROUP BY pida ORDER BY pida;
 
 CREATE VIEW playerCountMatches AS
-    SELECT pida AS pid, sum(countA) AS matches FROM
+    SELECT pida AS id, sum(countA) AS matches FROM
         (SELECT pida, count(pida) AS countA FROM matches WHERE status != 0 GROUP BY pida
         UNION ALL
         SELECT pidb, count(pidb) AS countB FROM matches WHERE status != 0 GROUP BY pidb) AS counts
         GROUP BY pida ORDER BY pida;
 
-\d
+CREATE VIEW playerCountPoints AS
+    SELECT id, sum(count) AS points FROM
+        ((SELECT id, (count*3) AS count FROM playerCountWins)
+        UNION ALL
+        (SELECT id, count AS count FROM playerCountDraws)) AS points
+        GROUP BY id ORDER BY id;
 
 INSERT INTO players(name) VALUES ('q');
 INSERT INTO players(name) VALUES ('w');
@@ -91,10 +91,10 @@ INSERT INTO matches(tid, pida, pidb, round) VALUES (1, 3, 4, 1);
 INSERT INTO matches(tid, pida, pidb, round) VALUES (1, 5, 6, 1);
 INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 1, 3, 2, 3);
 INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 1, 4, 2, 3);
-INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 1, 5, 2, 1);
 INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 1, 6, 2, 2);
 INSERT INTO matches(tid, pida, pidb, round, status) VALUES (1, 2, 6, 2, 2);
 
+\d
 SELECT * FROM players;
 SELECT * FROM tournaments;
 SELECT * FROM matches;

@@ -10,37 +10,29 @@ def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
     return psycopg2.connect("dbname=tournament")
 
-
 def deleteMatches():
     """Remove all the match records from the database."""
     DB = connect()
     cursor = DB.cursor()
     cursor.execute("DELETE FROM matches;")
+    DB.commit()
     DB.close()
-
 
 def deletePlayers():
     """Remove all the player records from the database."""
     DB = connect()
     cursor = DB.cursor()
     cursor.execute("DELETE FROM players;")
+    DB.commit()
     DB.close()
-
 
 def deleteTournaments():
     """Remove all the tournament records from the database."""
     DB = connect()
     cursor = DB.cursor()
     cursor.execute("DELETE FROM tournaments;")
+    DB.commit()
     DB.close()
-
-def delectMatchesCurrent():
-    """Remove all the match records for the current tournament from the database."""
-    # TODO: Extension
-
-def delectPlayersCurrent():
-    """Remove all the player records for the current tournament from the database."""
-    # TODO: Extension
 
 def countPlayers():
     """Returns the number of players currently registered."""
@@ -60,7 +52,12 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-
+    # TODO: Check for current tournement
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("INSERT INTO players (name) VALUES (%s)",(name,))
+    DB.commit()
+    DB.close()
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -75,6 +72,19 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    # TODO: Current tournement
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("""SELECT currentPlayers.id, currentPlayers.name,
+        CASE WHEN playerCountMatches.matches IS NULL THEN 0 ELSE playerCountMatches.matches END AS matches,
+        CASE WHEN playerCountPoints.points IS NULL THEN 0 ELSE playerCountPoints.points END AS matches
+        FROM currentPlayers
+        currentPlayers LEFT JOIN 
+        (playerCountMatches LEFT JOIN playerCountPoints ON playerCountMatches.id = playerCountPoints.id)
+        ON currentPlayers.id = playerCountMatches.id;""")
+    posts = cursor.fetchall()
+    DB.close()
+    return posts
 
 
 def reportMatch(winner, loser):
@@ -102,4 +112,51 @@ def swissPairings():
         name2: the second player's name
     """
 
+# Extra functions
+def printMatches():
+    """Print a list of all the matches in the database."""
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("SELECT * FROM matches ORDER BY tid, round, pida;")
+    for row in cursor.fetchall():
+        print(row)
+    DB.close()
 
+def printPlayers():
+    """Print a list of all the players in the database."""
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("SELECT * FROM players;")
+    for row in cursor.fetchall():
+        print(row)
+    DB.close()
+
+def printStandings():
+    """Print the output of the player standings."""
+    for row in playerStandings():
+        print(row)
+
+def printTournaments():
+    """Print a list of all the matches in the database."""
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("SELECT * FROM tournaments;")
+    for row in cursor.fetchall():
+        print(row)
+    DB.close()
+
+def printMatchesCurrent():
+    """Print a list of all the matches in the current tournament."""
+    # TODO: Extension
+
+def printPlayersCurrent():
+    """Print a list of all the matches in the database current tournament."""
+    # TODO: Extension
+
+def deleteMatchesCurrent():
+    """Remove all the match records for the current tournament from the database."""
+    # TODO: Extension
+
+def deletePlayersCurrent():
+    """Remove all the player records for the current tournament from the database."""
+    # TODO: Extension
