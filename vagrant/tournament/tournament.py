@@ -98,7 +98,7 @@ def reportMatch(pida, pidb, status):
     """
     DB = connect()
     cursor = DB.cursor()
-    cursor.execute("""INSERT INTO matches (tid, pida, pidb, status) VALUES (5, %s, %s, %s)""", (pida, pidb, status,));
+    cursor.execute("""INSERT INTO matches (tid, pida, pidb, status) VALUES (%s, %s, %s, %s)""", (getTournamentID(), pida, pidb, status,));
     DB.commit()
     DB.close()
  
@@ -118,15 +118,39 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    standings = playerStandings()
+    rows = []
+    pairings = []
+    for x in range(0, len(standings) / 2):
+        pairings += {(standings[2 * x][0], standings[2 * x][1], standings[(2 * x) + 1][0], standings[(2 * x) + 1][1])}
+
+    print(pairings)
+    return pairings
+
 
 # Extra functions
-
 def createTournament(name):
     DB = connect()
     cursor = DB.cursor()
     cursor.execute("INSERT INTO tournaments (name) VALUES (%s)",(name,))
     DB.commit()
     DB.close()
+
+def deleteMatchesCurrent():
+    """Remove all the match records for the current tournament from the database."""
+    # TODO: Extension
+
+def deletePlayersCurrent():
+    """Remove all the player records for the current tournament from the database."""
+    # TODO: Extension
+
+def getTournamentID():
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("SELECT id FROM tournaments WHERE status < 2;")
+    tid = cursor.fetchall()[0][0]
+    DB.close()
+    return tid
 
 def printMatches():
     """Print a list of all the matches in the database."""
@@ -166,12 +190,4 @@ def printMatchesCurrent():
 
 def printPlayersCurrent():
     """Print a list of all the matches in the database current tournament."""
-    # TODO: Extension
-
-def deleteMatchesCurrent():
-    """Remove all the match records for the current tournament from the database."""
-    # TODO: Extension
-
-def deletePlayersCurrent():
-    """Remove all the player records for the current tournament from the database."""
     # TODO: Extension
