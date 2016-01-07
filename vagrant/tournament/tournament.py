@@ -76,14 +76,7 @@ def playerStandings():
     # TODO: sort 2 - opponant points
     DB = connect()
     cursor = DB.cursor()
-    cursor.execute("""SELECT currentPlayers.id, currentPlayers.name,
-        CASE WHEN playerCountPoints.points IS NULL THEN 0 ELSE playerCountPoints.points END AS points,
-        CASE WHEN playerCountMatches.matches IS NULL THEN 0 ELSE playerCountMatches.matches END AS matches
-        FROM currentPlayers
-        currentPlayers LEFT JOIN 
-        (playerCountMatches LEFT JOIN playerCountPoints ON playerCountMatches.id = playerCountPoints.id)
-        ON currentPlayers.id = playerCountMatches.id
-        ORDER BY points DESC, id ASC;""")
+    cursor.execute("""SELECT * FROM playerStandings;""")
     posts = cursor.fetchall()
     DB.close()
     return posts
@@ -123,8 +116,6 @@ def swissPairings():
     pairings = []
     for x in range(0, len(standings) / 2):
         pairings += {(standings[2 * x][0], standings[2 * x][1], standings[(2 * x) + 1][0], standings[(2 * x) + 1][1])}
-
-    print(pairings)
     return pairings
 
 
@@ -138,11 +129,19 @@ def createTournament(name):
 
 def deleteMatchesCurrent():
     """Remove all the match records for the current tournament from the database."""
-    # TODO: Extension
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("DELETE FROM matches WHERE tid = %s;",(getTournamentID(),))
+    DB.commit()
+    DB.close()
 
 def deletePlayersCurrent():
     """Remove all the player records for the current tournament from the database."""
-    # TODO: Extension
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("DELETE FROM currentPlayers WHERE second = 'f';")
+    DB.commit()
+    DB.close()
 
 def getTournamentID():
     DB = connect()

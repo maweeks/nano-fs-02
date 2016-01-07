@@ -22,7 +22,8 @@ CREATE TABLE tournaments(
 CREATE TABLE players(
     id SERIAL PRIMARY KEY,
     name VARCHAR(20),
-    current BOOLEAN DEFAULT 't'
+    current BOOLEAN DEFAULT 't',
+    second BOOLEAN DEFAULT 'f'
 );
 
 
@@ -36,7 +37,7 @@ CREATE TABLE matches(
 
 -- TODO: for current tournament
 CREATE VIEW currentPlayers AS
-    SELECT * FROM players;
+    SELECT * FROM players WHERE current = 't';
 
 CREATE VIEW playerCountDraws AS
     SELECT pida AS id, sum(countA) AS count FROM
@@ -73,8 +74,22 @@ CREATE VIEW playerCountPoints AS
         (SELECT id, count AS count FROM playerCountDraws)) AS points
         GROUP BY id ORDER BY id;
 
-INSERT INTO players(name) VALUES ('q');
-INSERT INTO players(name) VALUES ('w');
+CREATE VIEW playerOMP AS
+    SELECT * FROM matches;
+
+CREATE VIEW playerStandings AS
+    SELECT currentPlayers.id, currentPlayers.name,
+        CASE WHEN playerCountPoints.points IS NULL THEN 0 ELSE playerCountPoints.points END AS points,
+        CASE WHEN playerCountMatches.matches IS NULL THEN 0 ELSE playerCountMatches.matches END AS matches
+        FROM currentPlayers
+        currentPlayers LEFT JOIN 
+        (playerCountMatches LEFT JOIN playerCountPoints ON playerCountMatches.id = playerCountPoints.id)
+        ON currentPlayers.id = playerCountMatches.id
+        ORDER BY points DESC, id ASC;
+    
+
+INSERT INTO players(name, current) VALUES ('q', 'f');
+INSERT INTO players(name, current) VALUES ('w', 'f');
 INSERT INTO players(name) VALUES ('e');
 INSERT INTO players(name) VALUES ('r');
 INSERT INTO players(name) VALUES ('t');
