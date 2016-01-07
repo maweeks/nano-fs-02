@@ -52,12 +52,15 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    # TODO: Check for current tournement
-    DB = connect()
-    cursor = DB.cursor()
-    cursor.execute("INSERT INTO players (name) VALUES (%s)",(name,))
-    DB.commit()
-    DB.close()
+    if getTournamentID() != -1:
+        DB = connect()
+        cursor = DB.cursor()
+        cursor.execute("INSERT INTO players (name) VALUES (%s)",(name,))
+        DB.commit()
+        DB.close()
+    else:
+        print("""There needs to be a current tournament to add a player.
+                  Create a tournament""")
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -72,22 +75,28 @@ def playerStandings():
         points: the points the player has won
         matches: the number of matches the player has played
     """
-    # TODO: Current tournement
-    # TODO: sort 2 - opponant points
-    DB = connect()
-    cursor = DB.cursor()
-    cursor.execute("""SELECT * FROM playerStandings;""")
-    posts = cursor.fetchall()
-    DB.close()
-    return posts
+    if getTournamentID() != -1:
+        # TODO: sort 2 - opponant points
+        DB = connect()
+        cursor = DB.cursor()
+        cursor.execute("""SELECT * FROM playerStandings;""")
+        posts = cursor.fetchall()
+        DB.close()
+        return posts
+    else:
+        return[]
 
 
 def reportMatch(pida, pidb, status):
     """Records the outcome of a single match between two players.
 
     Args:
-      winner:  the id number of the player who won
-      loser:  the id number of the player who lost
+      pida:  the id number of the player first player
+      pidb:  the id number of the player second player
+      status: indicates the winner of the match:
+                1 - pida won the match
+                2 - pidb won the match
+                3 - the match ended in a draw
     """
     DB = connect()
     cursor = DB.cursor()
@@ -139,7 +148,7 @@ def deletePlayersCurrent():
     """Remove all the player records for the current tournament from the database."""
     DB = connect()
     cursor = DB.cursor()
-    cursor.execute("DELETE FROM currentPlayers WHERE second = 'f';")
+    cursor.execute("DELETE FROM currentPlayers WHERE multiple = 'f';")
     DB.commit()
     DB.close()
 
@@ -147,7 +156,12 @@ def getTournamentID():
     DB = connect()
     cursor = DB.cursor()
     cursor.execute("SELECT id FROM tournaments WHERE status < 2;")
-    tid = cursor.fetchall()[0][0]
+    tid = cursor.fetchall()
+    if tid != []:
+        tid = tid[0][0]
+    # Return -1 if there is no current tournament.
+    else:
+        tid = -1
     DB.close()
     return tid
 
@@ -185,8 +199,18 @@ def printTournaments():
 
 def printMatchesCurrent():
     """Print a list of all the matches in the current tournament."""
-    # TODO: Extension
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("SELECT * FROM matches WHERE tid = %s;",(getTournamentID(),))
+    for row in cursor.fetchall():
+        print(row)
+    DB.close()
 
 def printPlayersCurrent():
     """Print a list of all the matches in the database current tournament."""
-    # TODO: Extension
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("SELECT * FROM currentPlayers;")
+    for row in cursor.fetchall():
+        print(row)
+    DB.close()

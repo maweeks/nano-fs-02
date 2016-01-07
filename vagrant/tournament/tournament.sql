@@ -23,7 +23,7 @@ CREATE TABLE players(
     id SERIAL PRIMARY KEY,
     name VARCHAR(20),
     current BOOLEAN DEFAULT 't',
-    second BOOLEAN DEFAULT 'f'
+    multiple BOOLEAN DEFAULT 'f'
 );
 
 
@@ -75,6 +75,7 @@ CREATE VIEW playerCountPoints AS
         GROUP BY id ORDER BY id;
 
 CREATE VIEW playerOMP AS
+-- todo
     SELECT * FROM matches;
 
 CREATE VIEW playerStandings AS
@@ -90,7 +91,7 @@ CREATE VIEW playerStandings AS
 
 INSERT INTO players(name, current) VALUES ('q', 'f');
 INSERT INTO players(name, current) VALUES ('w', 'f');
-INSERT INTO players(name) VALUES ('e');
+INSERT INTO players(name, multiple) VALUES ('e', 't');
 INSERT INTO players(name) VALUES ('r');
 INSERT INTO players(name) VALUES ('t');
 INSERT INTO players(name) VALUES ('y');
