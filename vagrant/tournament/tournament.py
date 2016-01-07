@@ -83,7 +83,7 @@ def playerStandings():
         # TODO: sort 2 - opponant points
         DB = connect()
         cursor = DB.cursor()
-        cursor.execute("""SELECT * FROM playerStandings;""")
+        cursor.execute("""SELECT * FROM playerStandingsSorted;""")
         posts = cursor.fetchall()
         DB.close()
         return posts

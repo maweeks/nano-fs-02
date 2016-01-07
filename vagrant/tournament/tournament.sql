@@ -81,10 +81,6 @@ CREATE VIEW playerCountPoints AS
         (SELECT id, count AS count FROM playerCountDraws)) AS points
         GROUP BY id ORDER BY id;
 
-CREATE VIEW playerOMP AS
--- todo
-    SELECT * FROM matches;
-
 CREATE VIEW playerStandings AS
     SELECT currentPlayers.id, currentPlayers.name,
         CASE WHEN playerCountPoints.points IS NULL THEN 0 ELSE playerCountPoints.points END AS points,
@@ -94,10 +90,26 @@ CREATE VIEW playerStandings AS
         (playerCountMatches LEFT JOIN playerCountPoints ON playerCountMatches.id = playerCountPoints.id)
         ON currentPlayers.id = playerCountMatches.id
         ORDER BY points DESC, id ASC;
-    
 
-INSERT INTO players(name, current) VALUES ('q', 'f');
-INSERT INTO players(name, current) VALUES ('w', 'f');
+
+CREATE VIEW playerOMP AS
+    SELECT allMatches.pid, sum(standings.points) AS omp FROM
+        ((SELECT pida AS pid, pidb AS oid FROM currentMatches)
+        UNION ALL
+        (SELECT pidb AS pid, pida AS oid FROM currentMatches)) AS allMatches
+        LEFT JOIN 
+        (SELECT * FROM playerStandings) AS standings
+        ON allMatches.oid = standings.id
+        GROUP BY allMatches.pid;
+
+CREATE VIEW playerStandingsSorted AS
+    SELECT playerStandings.id, playerStandings.name, playerStandings.points, playerStandings.matches FROM playerStandings
+                playerStandings JOIN playerOMP ON playerStandings.id = playerOMP.pid
+                ORDER BY playerStandings.points DESC, playerOMP.omp DESC;
+
+
+INSERT INTO players(name) VALUES ('q');
+INSERT INTO players(name) VALUES ('w');
 INSERT INTO players(name, multiple) VALUES ('e', 't');
 INSERT INTO players(name) VALUES ('r');
 INSERT INTO players(name) VALUES ('t');
@@ -112,13 +124,15 @@ INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 2, 1);
 INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 3, 4, 2);
 INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 5, 6, 3);
 INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 3, 3);
-INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 4, 3);
-INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 6, 2);
 INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 2, 6, 2);
+INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 4, 5, 2);
 
 \d
 SELECT * FROM players;
 SELECT * FROM tournaments;
 SELECT * FROM matches;
+SELECT * FROM playerOMP;
+SELECT * FROM playerStandings;
+SELECT * FROM playerStandingsSorted;
 
 \c vagrant;
