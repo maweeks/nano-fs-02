@@ -52,15 +52,19 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    if getTournamentID() != -1:
-        DB = connect()
-        cursor = DB.cursor()
-        cursor.execute("INSERT INTO players (name) VALUES (%s)",(name,))
-        DB.commit()
-        DB.close()
+    tournamentID = getTournamentID()
+    if tournamentID != -1:
+        status = getTournamentStatus(tournamentID)
+        if status == 0:
+            DB = connect()
+            cursor = DB.cursor()
+            cursor.execute("INSERT INTO players (name) VALUES (%s)",(name,))
+            DB.commit()
+            DB.close()
+        else:
+            print("The current tournament is already underway, no more players can be added.")
     else:
-        print("""There needs to be a current tournament to add a player.
-                  Create a tournament""")
+        print("""There needs to be a current tournament to add a player. \nCreate a tournament before registering players.""")
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -129,6 +133,13 @@ def swissPairings():
 
 
 # Extra functions
+def activatePlayer(id):
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("""UPDATE players SET (current, multiple) = ('t', 't') WHERE id=(%s)""",(id,))
+    DB.commit()
+    DB.close()    
+
 def createTournament(name):
     DB = connect()
     cursor = DB.cursor()
@@ -155,7 +166,7 @@ def deletePlayersCurrent():
 def getTournamentID():
     DB = connect()
     cursor = DB.cursor()
-    cursor.execute("SELECT id FROM tournaments WHERE status < 2;")
+    cursor.execute("SELECT id FROM currentTournament;")
     tid = cursor.fetchall()
     if tid != []:
         tid = tid[0][0]
@@ -164,6 +175,17 @@ def getTournamentID():
         tid = -1
     DB.close()
     return tid
+
+def getTournamentStatus(id):
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("SELECT status FROM tournaments WHERE id=(%s);",(id,))
+    status = cursor.fetchall()
+    DB.close()
+    if status != []:
+        return status[0][0]
+    else:
+        return []
 
 def printMatches():
     """Print a list of all the matches in the database."""

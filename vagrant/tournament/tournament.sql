@@ -35,9 +35,16 @@ CREATE TABLE matches(
     PRIMARY KEY (tid, pida, pidb)
 );
 
--- TODO: for current tournament
+CREATE VIEW currentMatches AS
+    SELECT tid, pida, pidb, status FROM matches,
+        (SELECT id FROM tournaments WHERE status < 2) AS tournamentID
+    WHERE tid = id;
+
 CREATE VIEW currentPlayers AS
     SELECT * FROM players WHERE current = 't';
+
+CREATE VIEW currentTournament AS
+    SELECT * FROM tournaments WHERE status < 2;
 
 CREATE VIEW playerCountDraws AS
     SELECT pida AS id, sum(countA) AS count FROM

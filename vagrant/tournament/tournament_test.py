@@ -30,6 +30,8 @@ def testCount():
 def testRegister():
     deleteMatches()
     deletePlayers()
+    deleteTournaments()
+    createTournament("a")
     registerPlayer("Chandra Nalaar")
     c = countPlayers()
     if c != 1:
@@ -41,6 +43,8 @@ def testRegister():
 def testRegisterCountDelete():
     deleteMatches()
     deletePlayers()
+    deleteTournaments()
+    createTournament("s")
     registerPlayer("Markov Chaney")
     registerPlayer("Joe Malik")
     registerPlayer("Mao Tsu-hsi")
@@ -59,6 +63,8 @@ def testRegisterCountDelete():
 def testStandingsBeforeMatches():
     deleteMatches()
     deletePlayers()
+    deleteTournaments()
+    createTournament("d")
     registerPlayer("Melpomene Murray")
     registerPlayer("Randy Schwartz")
     standings = playerStandings()
@@ -83,7 +89,7 @@ def testReportMatches():
     deleteMatches()
     deletePlayers()
     deleteTournaments()
-    createTournament("x")
+    createTournament("f")
     registerPlayer("Bruno Walton")
     registerPlayer("Boots O'Neal")
     registerPlayer("Cathy Burton")
@@ -107,7 +113,7 @@ def testPairings():
     deleteMatches()
     deletePlayers()
     deleteTournaments()
-    createTournament("x")
+    createTournament("g")
     registerPlayer("Twilight Sparkle")
     registerPlayer("Fluttershy")
     registerPlayer("Applejack")
