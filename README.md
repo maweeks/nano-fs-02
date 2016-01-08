@@ -6,22 +6,52 @@ Common code for the Relational Databases and Full Stack Fundamentals courses
 Setup(Mac):
 -----------
 
-Install Virtualbox and Vagrant
+1. Install [VirtualBox](https://www.virtualbox.org) and [Vagrant](http://vagrantup.com/)
 
-Clone this repository
+2. Clone this repository.
+	* git clone https://github.com/maweeks/nano-fs-02.git
 
-Open terminal
+3. Open the terminal application
 
-Navigate inside cloned repo, into the vagrant file
+4. Navigate inside the cloned repository, into the vagrant folder.
 
-Run the following commands:
+5. Run the following commands in the terminal:
+  * vagrant up
+  * cd /vagrant/tournament
+  * psql
+  * \i tournament.sql; \q
 
-vagrant up
+6. The database is now set up to be used.
 
-cd /vagrant/tournament
 
-psql
+Functions to run a tournament (see the example in t-test.py):
+-------------------------------------------------------------
 
-\i tournament.sql; \q
+1. createTournament(name)
 
-The database is now set up to be used.
+2. registerPlayer(name) and activatePlayer(id)
+
+3. beginTournament()
+
+4. swissPairings()
+
+5. reportMatch(pida, pidb, status)
+
+6. Repeat steps
+
+Additional Features:
+--------------------
+
+* Multiple tournaments supported (only one active tournament at a time).
+
+* Tied games are supported.
+
+* When players have the same number of points it is then ranked by the OMP (Opponent Match points)
+
+
+Current restrictions:
+---------------------
+
+* Rematches between players are not avoided.
+
+* Assumes an even number of players.
