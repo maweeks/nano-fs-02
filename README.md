@@ -1,5 +1,6 @@
 Fullstack Nano 2 - Tournament Scheduler
 =======================================
+_Forked from udacity/fullstack-nanodegree-vm_
 
 Common code for the Relational Databases and Full Stack Fundamentals courses
 
@@ -22,7 +23,7 @@ Setup(Mac):
 
 _The database is now set up to be used._
 
-_Import tournament.py into python to create tournaments._
+Import tournament.py into python to create tournaments.
 
 
 Functions to run a tournament (see the example in t-test.py):
