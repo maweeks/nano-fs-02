@@ -9,18 +9,16 @@ Setup(Mac):
 1. Install [VirtualBox](https://www.virtualbox.org) and [Vagrant](http://vagrantup.com/)
 
 2. Clone this repository.
-	* git clone https://github.com/maweeks/nano-fs-02.git
+``` git clone https://github.com/maweeks/nano-fs-02.git ```
 
 3. Open the terminal application
 
 4. Navigate inside the cloned repository, into the vagrant folder.
 
-5. Run the following commands in the terminal:
-  * vagrant up
-  * cd /vagrant/tournament
-  * psql -c '\i tournament.sql; \q'
+5. Run the following command in the terminal:
+``` vagrant up; cd /tournament; psql -c '\i tournament.sql; \q' ```
 
-6. The database is now set up to be used.
+_The database is now set up to be used._
 
 
 Functions to run a tournament (see the example in t-test.py):
