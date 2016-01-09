@@ -18,8 +18,7 @@ Setup(Mac):
 5. Run the following commands in the terminal:
   * vagrant up
   * cd /vagrant/tournament
-  * psql
-  * \i tournament.sql; \q
+  * psql -c '\i tournament.sql; \q'
 
 6. The database is now set up to be used.
 
