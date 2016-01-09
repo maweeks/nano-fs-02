@@ -20,11 +20,9 @@ Setup(Mac):
 
 ``` vagrant up; cd /tournament; psql -c '\i tournament.sql; \q' ```
 
-_
-The database is now set up to be used.
+_The database is now set up to be used._
 
-Import tournament.py into a python file to create tournaments.
-_
+_Import tournament.py into python to create tournaments._
 
 
 Functions to run a tournament (see the example in t-test.py):
