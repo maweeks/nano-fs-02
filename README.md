@@ -10,7 +10,7 @@ Setup(Mac):
 
 2. Clone this repository.
 
-``` git clone https://github.com/maweeks/nano-fs-02.git ```
+  ``` git clone https://github.com/maweeks/nano-fs-02.git ```
 
 3. Open the terminal application
 
@@ -18,7 +18,7 @@ Setup(Mac):
 
 5. Run the following command in the terminal:
 
-``` vagrant up; cd /tournament; psql -c '\i tournament.sql; \q' ```
+  ``` vagrant up; cd /tournament; psql -c '\i tournament.sql; \q' ```
 
 _The database is now set up to be used._
 
