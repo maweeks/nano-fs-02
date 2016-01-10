@@ -17,9 +17,15 @@ Setup(Mac):
 
 4. Navigate inside the cloned repository, into the vagrant folder.
 
-5. Run the following command in the terminal:
+	``` cd [REPOSITORY_LOCATION]/nano-fs-02/vagrant ````
 
-  ``` vagrant up; cd tournament/; psql -c '\i tournament.sql; \q' ```
+5. Start up and connect to the vagrant machine using the following command:
+
+  ``` vagrant up; vagrant ssh; '''
+
+6. Set up the database on the VM using the following command:
+
+  ``` cd /vagrant/tournament/; psql -c '\i tournament.sql; \q'; ```
 
 _The database is now set up to be used._
 
