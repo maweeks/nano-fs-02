@@ -91,41 +91,40 @@ CREATE VIEW playerStandings AS
         ON currentPlayers.id = playerCountMatches.id
         ORDER BY points DESC, id ASC;
 
-
 CREATE VIEW playerOMP AS
-    SELECT allMatches.pid, sum(standings.points) AS omp FROM
+    SELECT standings.id, sum(standings.points) AS omp FROM
         ((SELECT pida AS pid, pidb AS oid FROM currentMatches)
         UNION ALL
         (SELECT pidb AS pid, pida AS oid FROM currentMatches)) AS allMatches
-        LEFT JOIN 
+        FULL JOIN 
         (SELECT * FROM playerStandings) AS standings
         ON allMatches.oid = standings.id
-        GROUP BY allMatches.pid;
+        GROUP BY standings.id;
 
 CREATE VIEW playerStandingsSorted AS
     SELECT playerStandings.id, playerStandings.name, playerStandings.points, playerStandings.matches FROM playerStandings
-                playerStandings JOIN playerOMP ON playerStandings.id = playerOMP.pid
-                ORDER BY playerStandings.points DESC, playerOMP.omp DESC;
+                playerStandings JOIN playerOMP ON playerStandings.id = playerOMP.id
+                ORDER BY playerStandings.points DESC, playerOMP.omp DESC, playerStandings.id;
 
 
-INSERT INTO players(name) VALUES ('q');
-INSERT INTO players(name) VALUES ('w');
-INSERT INTO players(name, multiple) VALUES ('e', 't');
-INSERT INTO players(name) VALUES ('r');
-INSERT INTO players(name) VALUES ('t');
-INSERT INTO players(name) VALUES ('y');
+-- INSERT INTO players(name) VALUES ('q');
+-- INSERT INTO players(name) VALUES ('w');
+-- INSERT INTO players(name, multiple) VALUES ('e', 't');
+-- INSERT INTO players(name) VALUES ('r');
+-- INSERT INTO players(name) VALUES ('t');
+-- INSERT INTO players(name) VALUES ('y');
 
-INSERT INTO tournaments(name) VALUES ('a');
-INSERT INTO tournaments(name) VALUES ('s');
-INSERT INTO tournaments(name) VALUES ('d');
-INSERT INTO tournaments(name) VALUES ('f');
+-- INSERT INTO tournaments(name) VALUES ('a');
+-- INSERT INTO tournaments(name) VALUES ('s');
+-- INSERT INTO tournaments(name) VALUES ('d');
+-- INSERT INTO tournaments(name) VALUES ('f');
 
-INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 2, 1);
-INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 3, 4, 2);
-INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 5, 6, 3);
-INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 3, 3);
-INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 2, 6, 2);
-INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 4, 5, 2);
+-- INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 2, 1);
+-- INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 3, 4, 2);
+-- INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 5, 6, 3);
+-- INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 1, 3, 3);
+-- INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 2, 6, 2);
+-- INSERT INTO matches(tid, pida, pidb, status) VALUES (1, 4, 5, 2);
 
 \d
 SELECT * FROM players;

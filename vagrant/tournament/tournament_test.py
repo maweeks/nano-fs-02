@@ -67,6 +67,7 @@ def testStandingsBeforeMatches():
     createTournament("d")
     registerPlayer("Melpomene Murray")
     registerPlayer("Randy Schwartz")
+    beginTournament()
     standings = playerStandings()
     if len(standings) < 2:
         raise ValueError("Players should appear in playerStandings even before "

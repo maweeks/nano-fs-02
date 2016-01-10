@@ -80,7 +80,6 @@ def playerStandings():
         matches: the number of matches the player has played
     """
     if getTournamentID() != -1:
-        # TODO: sort 2 - opponant points
         DB = connect()
         cursor = DB.cursor()
         cursor.execute("""SELECT * FROM playerStandingsSorted;""")
@@ -134,11 +133,26 @@ def swissPairings():
 
 # Extra functions
 def activatePlayer(id):
+    tournamentID = getTournamentID()
+    if tournamentID != -1:
+        status = getTournamentStatus(tournamentID)
+        if status == 0:
+            DB = connect()
+            cursor = DB.cursor()
+            cursor.execute("""UPDATE players SET (current, multiple) = ('t', 't') WHERE id=(%s)""",(id,))
+            DB.commit()
+            DB.close()
+        else:
+            print("The current tournament is already underway, no more players can be added.")
+    else:
+        print("""There needs to be a current tournament to add a player. \nCreate a tournament before registering players.""")
+
+def beginTournament():
     DB = connect()
     cursor = DB.cursor()
-    cursor.execute("""UPDATE players SET (current, multiple) = ('t', 't') WHERE id=(%s)""",(id,))
+    cursor.execute("""UPDATE tournaments SET (status) = (1) WHERE status=0""")
     DB.commit()
-    DB.close()    
+    DB.close()
 
 def createTournament(name):
     DB = connect()
@@ -160,6 +174,13 @@ def deletePlayersCurrent():
     DB = connect()
     cursor = DB.cursor()
     cursor.execute("DELETE FROM currentPlayers WHERE multiple = 'f';")
+    DB.commit()
+    DB.close()
+
+def endTournament():
+    DB = connect()
+    cursor = DB.cursor()
+    cursor.execute("""UPDATE tournaments SET (status) = (2) WHERE status=1""")
     DB.commit()
     DB.close()
 
