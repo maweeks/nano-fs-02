@@ -62,7 +62,7 @@ print("\n12")
 registerPlayer("Jam")
 registerPlayer("Tim")
 registerPlayer("Rib")
-registerPlayer("Mix")
+activatePlayer(pid2)
 
 printPlayers()
 

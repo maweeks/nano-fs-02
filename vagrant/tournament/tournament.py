@@ -181,6 +181,7 @@ def deletePlayersCurrent():
     DB = connect()
     cursor = DB.cursor()
     cursor.execute("DELETE FROM currentPlayers WHERE multiple = 'f';")
+    cursor.execute("UPDATE currentPlayers SET (current) = ('f') WHERE multiple='t'")
     DB.commit()
     DB.close()
 
