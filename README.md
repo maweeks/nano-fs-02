@@ -45,7 +45,11 @@ Functions to run a tournament (see the example in t-test.py):
 
 5. reportMatch(pida, pidb, status)
 
-6. Repeat steps
+	_Repeat steps 4 and 5 until the tournament is finished._
+
+6. playerStandings()
+
+7. endTournament()
 
 Additional Features:
 --------------------

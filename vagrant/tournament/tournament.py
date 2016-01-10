@@ -226,6 +226,12 @@ def printMatches():
         print(row)
     DB.close()
 
+def printPairings():
+    """Print a list of all the pairings for the next round."""
+    pairings = swissPairings()
+    for row in pairings:
+        print(row)
+
 def printPlayers():
     """Print a list of all the players in the database."""
     DB = connect()

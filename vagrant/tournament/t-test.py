@@ -58,8 +58,8 @@ printPlayers()
 
 # Report the second round of matches
 print("\n8")
-reportMatch(pid1, pid4, 3)
-reportMatch(pid2, pid3, 1)
+reportMatch(pid1, pid2, 2)
+reportMatch(pid3, pid4, 3)
 
 printMatches()
 

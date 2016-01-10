@@ -5,54 +5,54 @@
 from tournament import *
 
 # Clear the entire database (not required)
-print("\n1")
+print("1")
 deleteMatches()
 deletePlayers()
 deleteTournaments()
 
 # Create a new tournament
-print("\n2")
+print("2")
 createTournament("first")
 
 # Register players
-print("\n3")
+print("3")
 registerPlayer("Jim")
 registerPlayer("Tom")
 registerPlayer("Rob")
 registerPlayer("Max")
 
 # Activate tournament
-print("\n4")
+print("4")
 beginTournament()
 
 # Get the first round of matches
-print("\n5")
+print("5")
 [(pid1, pname1, pid2, pname2), (pid3, pname3, pid4, pname4)] = swissPairings()
 
 # Report the first round of matches
-print("\n6")
+print("6")
 reportMatch(pid1, pid2, 1)
 reportMatch(pid3, pid4, 2)
 
 # Get the second round of matches
-print("\n7")
+print("7")
 [(pid1, pname1, pid2, pname2), (pid3, pname3, pid4, pname4)] = swissPairings()
 
 # Report the second round of matches
-print("\n8")
-reportMatch(pid1, pid4, 3)
-reportMatch(pid2, pid3, 1)
+print("8")
+reportMatch(pid1, pid2, 2)
+reportMatch(pid3, pid4, 3)
 
 # Check tournament standings
-print("\n9")
+print("9")
 playerStandings()
 
 # Deactivate the tournament so that another tournament can be created.
-print("\n10")
+print("10")
 endTournament()
 
 # Create a new tournament
-print("\n11")
+print("11")
 createTournament("second")
 
 printTournaments()
@@ -72,7 +72,6 @@ beginTournament()
 
 printTournaments()
 
-
 # Get the first round of matches
 print("\n14")
 [(pid1, pname1, pid2, pname2), (pid3, pname3, pid4, pname4)] = swissPairings()
@@ -91,12 +90,12 @@ printStandings()
 print("\n16")
 [(pid1, pname1, pid2, pname2), (pid3, pname3, pid4, pname4)] = swissPairings()
 
-printPlayersCurrent()
+printPairings()
 
 # Report the second round of matches
 print("\n17")
-reportMatch(pid1, pid4, 3)
-reportMatch(pid2, pid3, 1)
+reportMatch(pid1, pid2, 2)
+reportMatch(pid3, pid4, 1)
 
 printMatchesCurrent()
 
