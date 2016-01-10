@@ -101,12 +101,19 @@ def reportMatch(pida, pidb, status):
                 2 - pidb won the match
                 3 - the match ended in a draw
     """
-    DB = connect()
-    cursor = DB.cursor()
-    cursor.execute("""INSERT INTO matches (tid, pida, pidb, status) VALUES (%s, %s, %s, %s)""", (getTournamentID(), pida, pidb, status,));
-    DB.commit()
-    DB.close()
- 
+    tournamentID = getTournamentID()
+    if tournamentID != -1:
+        status = getTournamentStatus(tournamentID)
+        if status == 1:
+            DB = connect()
+            cursor = DB.cursor()
+            cursor.execute("""INSERT INTO matches (tid, pida, pidb, status) VALUES (%s, %s, %s, %s)""", (getTournamentID(), pida, pidb, status,));
+            DB.commit()
+            DB.close()
+        else:
+            print("The current tournament is not in the match phase, matches cannot be be added.")
+    else:
+        print("""There needs to be a current tournament to report a match. \nCreate a tournament before reporting matches.""")
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
