@@ -107,12 +107,12 @@ CREATE VIEW playerStandingsSorted AS
                 playerStandings JOIN playerOMP ON playerStandings.id = playerOMP.id
                 ORDER BY playerStandings.points DESC, playerOMP.omp DESC, playerStandings.id;
 
-\d
-SELECT * FROM players;
-SELECT * FROM tournaments;
-SELECT * FROM matches;
-SELECT * FROM playerOMP;
-SELECT * FROM playerStandings;
-SELECT * FROM playerStandingsSorted;
+-- \d
+-- SELECT * FROM players;
+-- SELECT * FROM tournaments;
+-- SELECT * FROM matches;
+-- SELECT * FROM playerOMP;
+-- SELECT * FROM playerStandings;
+-- SELECT * FROM playerStandingsSorted;
 
-\c vagrant;
+-- \c vagrant;
