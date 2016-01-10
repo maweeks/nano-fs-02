@@ -28,11 +28,12 @@ CREATE TABLE players(
 
 
 CREATE TABLE matches(
+    mid SERIAL,
     tid INT REFERENCES tournaments(id) ON DELETE CASCADE,
     pida INT REFERENCES  players(id) ON DELETE CASCADE,
     pidb INT REFERENCES  players(id) ON DELETE CASCADE,
     status INT,
-    PRIMARY KEY (tid, pida, pidb)
+    PRIMARY KEY (mid, tid, pida, pidb)
 );
 
 CREATE VIEW currentMatches AS

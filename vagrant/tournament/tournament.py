@@ -107,7 +107,6 @@ def reportMatch(pida, pidb, status):
         if tStatus == 1:
             DB = connect()
             cursor = DB.cursor()
-            print status
             cursor.execute("""INSERT INTO matches (tid, pida, pidb, status) VALUES (%s, %s, %s, %s)""", (getTournamentID(), pida, pidb, status,));
             DB.commit()
             DB.close()
