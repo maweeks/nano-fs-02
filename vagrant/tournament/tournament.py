@@ -136,13 +136,16 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-    standings = playerStandings()
-    rows = []
-    pairings = []
-    for x in range(0, len(standings) / 2):
-        pairings += {(standings[2 * x][0], standings[2 * x][1],
-                      standings[(2 * x) + 1][0], standings[(2 * x) + 1][1])}
-    return pairings
+    if (countCurrentPlayers() % 2 == 0):
+        standings = playerStandings()
+        rows = []
+        pairings = []
+        for x in range(0, len(standings) / 2):
+            pairings += {(standings[2 * x][0], standings[2 * x][1],
+                          standings[(2 * x) + 1][0], standings[(2 * x) + 1][1])}
+        return pairings
+    else:
+        print("""Must have an even number of players.""")
 
 
 # Extra functions
@@ -171,6 +174,15 @@ def beginTournament():
     cursor.execute("""UPDATE tournaments SET (status) = (1) WHERE status=0""")
     DB.commit()
     DB.close()
+
+
+def countCurrentPlayers():
+    """Returns the number of players currently registered."""
+    DB, cursor = connect()
+    cursor.execute("SELECT count(*) FROM currentPlayers;")
+    value = cursor.fetchone()[0]
+    DB.close()
+    return value
 
 
 def createTournament(name):
