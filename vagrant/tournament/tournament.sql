@@ -10,7 +10,7 @@ SELECT pg_terminate_backend(pg_stat_activity.pid)
 FROM pg_stat_activity
 WHERE pg_stat_activity.datname = 'tournament'
   AND pid <> pg_backend_pid();
-  
+
 \c vagrant;
 
 DROP DATABASE IF EXISTS tournament;
@@ -28,7 +28,7 @@ CREATE TABLE tournaments(
 
 CREATE TABLE players(
     id SERIAL PRIMARY KEY,
-    name VARCHAR(20),
+    name VARCHAR(20) NOT NULL,
     current BOOLEAN DEFAULT 't',
     multiple BOOLEAN DEFAULT 'f'
 );
