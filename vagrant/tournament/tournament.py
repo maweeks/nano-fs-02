@@ -8,13 +8,17 @@ import psycopg2
 
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    try:
+        DB = psycopg2.connect("dbname=tournament")
+        cursor = DB.cursor()
+        return DB, cursor
+    except:
+        print("Failed to connect to the database.")
 
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("DELETE FROM matches;")
     DB.commit()
     DB.close()
@@ -22,8 +26,7 @@ def deleteMatches():
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("DELETE FROM players;")
     DB.commit()
     DB.close()
@@ -31,8 +34,7 @@ def deletePlayers():
 
 def deleteTournaments():
     """Remove all the tournament records from the database."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("DELETE FROM tournaments;")
     DB.commit()
     DB.close()
@@ -40,8 +42,7 @@ def deleteTournaments():
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("SELECT count(*) FROM players;")
     value = cursor.fetchall()[0][0]
     DB.close()
@@ -61,8 +62,7 @@ def registerPlayer(name):
     if tournamentID != -1:
         status = getTournamentStatus(tournamentID)
         if status == 0:
-            DB = connect()
-            cursor = DB.cursor()
+            DB, cursor = connect()
             cursor.execute("INSERT INTO players (name) VALUES (%s)", (name,))
             DB.commit()
             DB.close()
@@ -86,8 +86,7 @@ def playerStandings():
         matches: the number of matches the player has played
     """
     if getTournamentID() != -1:
-        DB = connect()
-        cursor = DB.cursor()
+        DB, cursor = connect()
         cursor.execute("""SELECT * FROM playerStandingsSorted;""")
         posts = cursor.fetchall()
         DB.close()
@@ -111,8 +110,7 @@ def reportMatch(pida, pidb, status):
     if tournamentID != -1:
         tStatus = getTournamentStatus(tournamentID)
         if tStatus == 1:
-            DB = connect()
-            cursor = DB.cursor()
+            DB, cursor = connect()
             cursor.execute("""INSERT INTO matches (tid, pida, pidb, status)
                             VALUES (%s, %s, %s, %s)""",
                            (getTournamentID(), pida, pidb, status,))
@@ -154,8 +152,7 @@ def activatePlayer(id):
     if tournamentID != -1:
         status = getTournamentStatus(tournamentID)
         if status == 0:
-            DB = connect()
-            cursor = DB.cursor()
+            DB, cursor = connect()
             cursor.execute("""UPDATE players SET (current, multiple) = ('t', 't') WHERE id=(%s)""", (id,))  # NOQA
             DB.commit()
             DB.close()
@@ -170,8 +167,7 @@ def beginTournament():
     Changes the current tournament from the player registraion phase
     to the match phase.
     """
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("""UPDATE tournaments SET (status) = (1) WHERE status=0""")
     DB.commit()
     DB.close()
@@ -182,8 +178,7 @@ def createTournament(name):
 
     Args:
       name:  the name of the tournament being created"""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("INSERT INTO tournaments (name) VALUES (%s)", (name,))
     DB.commit()
     DB.close()
@@ -191,8 +186,7 @@ def createTournament(name):
 
 def deleteMatchesCurrent():
     """Remove all the match records for the current tournament from the database."""  # NOQA
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("DELETE FROM matches WHERE tid = %s;", (getTournamentID(),))
     DB.commit()
     DB.close()
@@ -200,8 +194,7 @@ def deleteMatchesCurrent():
 
 def deletePlayersCurrent():
     """Remove all the player records for the current tournament from the database."""  # NOQA
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("DELETE FROM currentPlayers WHERE multiple = 'f';")
     cursor.execute("""UPDATE currentPlayers SET (current) = ('f')
                       WHERE multiple='t'""")
@@ -214,8 +207,7 @@ def endTournament():
     Closes the current tournament so new tournaments
     can be added.
     """
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("""UPDATE tournaments SET (status) = (2) WHERE status=1""")
     cursor.execute("""UPDATE players SET (current) = ('f')
                       WHERE current='t'""")
@@ -231,8 +223,7 @@ def getTournamentID():
         the id of the current tournament
         returns -1 if there is no current tournament
     """
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("SELECT id FROM currentTournament;")
     tid = cursor.fetchall()
     if tid != []:
@@ -254,8 +245,7 @@ def getTournamentStatus(id):
     Returns:
         The status of the specified tournament.
     """
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("SELECT status FROM tournaments WHERE id=(%s);", (id,))
     status = cursor.fetchall()
     DB.close()
@@ -267,8 +257,7 @@ def getTournamentStatus(id):
 
 def printMatches():
     """Print a list of all the matches in the database."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("SELECT * FROM matches ORDER BY tid;")
     for row in cursor.fetchall():
         print(row)
@@ -284,8 +273,7 @@ def printPairings():
 
 def printPlayers():
     """Print a list of all the players in the database."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("SELECT * FROM players;")
     for row in cursor.fetchall():
         print(row)
@@ -300,8 +288,7 @@ def printStandings():
 
 def printTournaments():
     """Print a list of all the matches in the database."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("SELECT * FROM tournaments;")
     for row in cursor.fetchall():
         print(row)
@@ -310,8 +297,7 @@ def printTournaments():
 
 def printMatchesCurrent():
     """Print a list of all the matches in the current tournament."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("""SELECT * FROM matches
                       WHERE tid = %s;""", (getTournamentID(),))
     for row in cursor.fetchall():
@@ -321,8 +307,7 @@ def printMatchesCurrent():
 
 def printPlayersCurrent():
     """Print a list of all the matches in the database current tournament."""
-    DB = connect()
-    cursor = DB.cursor()
+    DB, cursor = connect()
     cursor.execute("SELECT * FROM currentPlayers;")
     for row in cursor.fetchall():
         print(row)
